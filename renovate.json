@@ -1,0 +1,38 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "automerge": false,
+  "separateMinorPatch": true,
+  "prConcurrentLimit": 0,
+  "packageRules": [
+    {
+      "matchPackageNames": ["caddy"],
+      "matchUpdateTypes": ["patch"],
+      "labels": ["routine-update", "caddy"],
+      "commitMessagePrefix": "fix(caddy): "
+    },
+    {
+      "matchPackageNames": ["caddy"],
+      "matchUpdateTypes": ["minor", "major"],
+      "labels": ["manual-review", "caddy"],
+      "commitMessagePrefix": "feat(caddy)!: "
+    },
+    {
+      "matchPackageNames": ["caddy-dns/cloudflare"],
+      "labels": ["routine-update", "cloudflare"],
+      "commitMessagePrefix": "chore(cloudflare): "
+    },
+    {
+      "matchPackageNames": ["alpine"],
+      "matchUpdateTypes": ["patch"],
+      "labels": ["routine-update", "alpine"],
+      "commitMessagePrefix": "fix(alpine): "
+    },
+    {
+      "matchPackageNames": ["alpine"],
+      "matchUpdateTypes": ["minor", "major"],
+      "labels": ["manual-review", "alpine"],
+      "commitMessagePrefix": "feat(alpine)!: "
+    }
+  ]
+}
