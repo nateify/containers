@@ -1,0 +1,13 @@
+name: Caddy
+
+on:
+  pull_request:
+    paths:
+      - "services/caddy/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/_build.yml
+    with:
+      service: caddy
