@@ -1,0 +1,24 @@
+name: BgUtils POT Provider
+
+on:
+  pull_request:
+    paths:
+      - services/bgutil/**
+  push:
+    branches:
+      - main
+    paths:
+      - services/bgutil/**
+  workflow_dispatch: null
+
+jobs:
+  build:
+    uses: ./.github/workflows/_build.yml
+    with:
+      service: bgutil
+      tag_template: "{BGUTIL_VERSION}"
+      image_name: bgutil-ytdlp-pot-provider
+      add_latest: true
+      upstream_repo: Brainicism/bgutil-ytdlp-pot-provider
+      upstream_sparse_checkout: server
+      build_context: upstream/server

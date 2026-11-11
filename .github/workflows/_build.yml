@@ -6,6 +6,33 @@ on:
       service:
         required: true
         type: string
+      tag_template:
+        required: true
+        type: string
+      image_name:
+        required: false
+        type: string
+        description: "Overrides image name if different from service folder name"
+      add_latest:
+        required: false
+        type: boolean
+        default: false
+      upstream_repo:
+        required: false
+        type: string
+        default: ""
+      upstream_ref:
+        required: false
+        type: string
+        default: ""
+      upstream_sparse_checkout:
+        required: false
+        type: string
+        default: ""
+      build_context:
+        required: false
+        type: string
+        default: ""
 
 jobs:
   build:
@@ -15,14 +42,28 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v7
+      - name: Checkout local repository
+        uses: actions/checkout@v7
 
       - name: Compute Tag
         id: tag
-        working-directory: services/${{ inputs.service }}
         run: |
-          TAG=$(bash ./get-tag.sh)
-          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          python3 scripts/get_tag.py \
+            --dockerfile "services/${{ inputs.service }}/Dockerfile" \
+            --template "${{ inputs.tag_template }}"
+
+      - name: Checkout upstream repo
+        if: inputs.upstream_repo != ''
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ inputs.upstream_repo }}
+          ref: ${{ inputs.upstream_ref != '' && inputs.upstream_ref || steps.tag.outputs.tag }}
+          path: upstream
+          sparse-checkout: ${{ inputs.upstream_sparse_checkout }}
+          sparse-checkout-cone-mode: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
 
       - name: Log in to GHCR
         uses: docker/login-action@v4
@@ -31,13 +72,30 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Determine Docker Tags
+        id: meta
+        run: |
+          IMAGE_NAME="${{ inputs.image_name != '' && inputs.image_name || inputs.service }}"
+          BASE="ghcr.io/${{ github.repository }}/${IMAGE_NAME}"
+
+          TAGS="${BASE}:${{ steps.tag.outputs.tag }}"
+
+          if [ "${{ inputs.add_latest }}" = "true" ]; then
+            TAGS="${TAGS},${BASE}:latest"
+          fi
+
+          echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
+
       - name: Build and Push
         uses: docker/build-push-action@v7
         with:
-          context: services/${{ inputs.service }}
+          context: ${{ inputs.build_context != '' && inputs.build_context || format('services/{0}', inputs.service) }}
+          file: services/${{ inputs.service }}/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/${{ inputs.service }}:${{ steps.tag.outputs.tag }}
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha,scope=${{ inputs.service }}
+          cache-to: type=gha,mode=max,scope=${{ inputs.service }}
 
       - name: Summary
         run: |
-          echo "Successfully pushed: ghcr.io/${{ github.repository }}/${{ inputs.service }}:${{ steps.tag.outputs.tag }}"
+          echo "Successfully pushed: ${{ steps.meta.outputs.tags }}"
