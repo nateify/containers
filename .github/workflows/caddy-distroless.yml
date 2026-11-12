@@ -1,0 +1,19 @@
+name: Caddy Distroless
+
+on:
+  pull_request:
+    paths:
+      - services/caddy-distroless/**
+  push:
+    branches:
+      - main
+    paths:
+      - services/caddy-distroless/**
+  workflow_dispatch: null
+
+jobs:
+  build:
+    uses: ./.github/workflows/_build.yml
+    with:
+      service: caddy-distroless
+      tag_template: "{CADDY_VERSION}-cf{CLOUDFLARE_PLUGIN_VERSION}"

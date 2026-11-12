@@ -1,38 +1,50 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "automerge": false,
   "separateMinorPatch": true,
   "prConcurrentLimit": 0,
   "packageRules": [
     {
-      "matchPackageNames": ["caddy"],
+      "description": "Baseline labels by update type",
       "matchUpdateTypes": ["patch"],
-      "labels": ["routine-update", "caddy"],
+      "addLabels": ["routine-update"]
+    },
+    {
+      "description": "Baseline labels by update type",
+      "matchUpdateTypes": ["minor", "major"],
+      "addLabels": ["manual-review"]
+    },
+    {
+      "matchPackageNames": ["caddy"],
+      "addLabels": ["caddy"],
+      "matchUpdateTypes": ["patch"],
       "commitMessagePrefix": "fix(caddy): "
     },
     {
       "matchPackageNames": ["caddy"],
+      "addLabels": ["caddy"],
       "matchUpdateTypes": ["minor", "major"],
-      "labels": ["manual-review", "caddy"],
       "commitMessagePrefix": "feat(caddy)!: "
     },
     {
       "matchPackageNames": ["caddy-dns/cloudflare"],
-      "labels": ["routine-update", "cloudflare"],
+      "addLabels": ["cloudflare"],
       "commitMessagePrefix": "chore(cloudflare): "
     },
     {
-      "matchPackageNames": ["alpine"],
-      "matchUpdateTypes": ["patch"],
-      "labels": ["routine-update", "alpine"],
-      "commitMessagePrefix": "fix(alpine): "
+      "matchPackageNames": ["ghcr.io/almalinux/**"],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)-(?<patch>\\d{8})$",
+      "addLabels": ["alma"]
     },
     {
-      "matchPackageNames": ["alpine"],
+      "matchPackageNames": ["ghcr.io/almalinux/**"],
+      "matchUpdateTypes": ["patch"],
+      "commitMessagePrefix": "fix(alma): "
+    },
+    {
+      "matchPackageNames": ["ghcr.io/almalinux/**"],
       "matchUpdateTypes": ["minor", "major"],
-      "labels": ["manual-review", "alpine"],
-      "commitMessagePrefix": "feat(alpine)!: "
+      "commitMessagePrefix": "feat(alma)!: "
     }
   ]
 }

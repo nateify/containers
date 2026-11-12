@@ -1,0 +1,19 @@
+name: Caddy Distroless
+
+on:
+  pull_request:
+    paths:
+      - services/podman/**
+  push:
+    branches:
+      - main
+    paths:
+      - services/podman/**
+  workflow_dispatch: null
+
+jobs:
+  build:
+    uses: ./.github/workflows/_build.yml
+    with:
+      service: podman
+      tag_template: "alma{ALMA_VERSION_SHORT}"
