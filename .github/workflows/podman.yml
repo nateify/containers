@@ -1,4 +1,4 @@
-name: Caddy Distroless
+name: Podman
 
 on:
   pull_request:
