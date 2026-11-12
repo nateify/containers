@@ -1,9 +1,6 @@
 name: BgUtils POT Provider
 
 on:
-  pull_request:
-    paths:
-      - services/bgutil/**
   push:
     branches:
       - main

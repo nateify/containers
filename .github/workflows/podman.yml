@@ -1,9 +1,6 @@
 name: Podman
 
 on:
-  pull_request:
-    paths:
-      - services/podman/**
   push:
     branches:
       - main

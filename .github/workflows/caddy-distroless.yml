@@ -1,9 +1,6 @@
 name: Caddy Distroless
 
 on:
-  pull_request:
-    paths:
-      - services/caddy-distroless/**
   push:
     branches:
       - main
