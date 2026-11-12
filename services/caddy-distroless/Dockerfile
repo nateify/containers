@@ -19,7 +19,7 @@ RUN mkdir -p \
 
 FROM gcr.io/distroless/static-debian13:nonroot
 
-COPY --from=builder /build/caddy /usr/bin/caddy
+COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 
 COPY --from=builder --chown=65532:65532 /config /config
 COPY --from=builder --chown=65532:65532 /data /data

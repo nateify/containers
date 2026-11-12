@@ -1,11 +1,11 @@
 ARG ALMA_VERSION=10.2-20261027
 
-# renovate: datasource=github-releases depName=krallin/tini
-ARG TINI_VERSION="v0.19.0"
-
 FROM docker/compose-bin:v5.6.1 AS compose-bin
 
 FROM ghcr.io/almalinux/10-minimal:${ALMA_VERSION}
+
+# renovate: datasource=github-releases depName=krallin/tini
+ARG TINI_VERSION="v0.19.0"
 
 RUN microdnf install -y \
     podman \
