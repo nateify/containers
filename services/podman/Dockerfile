@@ -1,4 +1,4 @@
-ARG ALMA_VERSION=10.2-20261027
+ARG ALMA_VERSION=10.2-20261114
 
 FROM docker/compose-bin:v5.7.1 AS compose-bin
 
