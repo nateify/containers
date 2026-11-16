@@ -29,7 +29,9 @@ ENV DOCKER_HOST="unix:///run/podman/podman.sock"
 RUN echo 'export DOCKER_HOST="unix:///run/podman/podman.sock"' > /etc/profile.d/docker_host.sh && \
     echo 'DOCKER_HOST="unix:///run/podman/podman.sock"' >> /etc/environment
 
-RUN mkdir -p /run/podman /var/lib/containers /etc/containers
+RUN mkdir -p /run/podman /var/lib/containers /var/lib/volumes /etc/containers
+
+RUN touch /etc/containers/nodocker
 
 RUN cat <<'EOF' > /etc/containers/containers.conf
 [containers]
@@ -45,11 +47,8 @@ service_timeout = 0
 volume_path = "/var/lib/volumes"
 EOF
 
-RUN cat <<'EOF' > /etc/containers/storage.conf
-[storage]
-driver = "overlay"
-EOF
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-ENTRYPOINT ["/usr/bin/tini", "--"]
-
+ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/entrypoint.sh"]
 CMD ["podman", "system", "service", "--time=0", "unix:///run/podman/podman.sock"]
