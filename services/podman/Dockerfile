@@ -26,6 +26,8 @@ RUN chmod +x /usr/local/bin/docker-compose && \
     ln -s /usr/local/bin/docker-compose /root/.docker/cli-plugins/docker-compose
 
 ENV DOCKER_HOST="unix:///run/podman/podman.sock"
+RUN echo 'export DOCKER_HOST="unix:///run/podman/podman.sock"' > /etc/profile.d/docker_host.sh && \
+    echo 'DOCKER_HOST="unix:///run/podman/podman.sock"' >> /etc/environment
 
 RUN mkdir -p /run/podman /var/lib/containers /etc/containers
 
@@ -40,14 +42,13 @@ cgroup_manager = "cgroupfs"
 events_logger = "file"
 events_logfile_max_size = "5m"
 service_timeout = 0
+volume_path = "/var/lib/volumes"
 EOF
 
 RUN cat <<'EOF' > /etc/containers/storage.conf
 [storage]
 driver = "overlay"
 EOF
-
-VOLUME /var/lib/containers
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 
