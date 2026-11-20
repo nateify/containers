@@ -1,6 +1,6 @@
 ARG ALMA_VERSION=10.3-20261116
 
-FROM docker/compose-bin:v5.7.1 AS compose-bin
+FROM docker/compose-bin:v5.7.2 AS compose-bin
 
 FROM ghcr.io/almalinux/10-minimal:${ALMA_VERSION}
 
